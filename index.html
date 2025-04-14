@@ -1,0 +1,304 @@
+<!--
+Version = 1.0.1v
+Project name : Control penal for Robotic Arm
+
+Project Desctption : Its a control penal in which you can control a 4 axis freedom robotic arm
+
+This project is created by Mohd Amir and Sunil kummar 
+Its a 
+class : ECE B
+Group - 02
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECE-B-Robotic-Hand-Controller-SYS </title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Fonts-->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@389&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+
+    <div class="heading-container flex center M-5">
+
+        <div class="heading flex">
+            <h1 class="">
+                Control Panel
+            </h1>
+        </div>
+        <div class="manu">
+            <div><button type="button" id="repository" class="R-10"><a
+                        href="https://github.com/mohdamirwebdeveloper/robotic-hand" target="_blank"
+                        style="color: white; text-decoration: none;">Repository</a></button></div>
+        </div>
+    </div>
+
+    <div id="root" class="root flex">
+        <div class="section-1 overflow-H ">
+
+            <div class="image-container overflow-H R-10 flex center">
+
+                <img class="R-H-img R-10" src="./img/roboticarm_3d_printied.jpg" alt="Robotic-Hand-Image" srcset="">
+            </div>
+        </div>
+
+        <!-- Control Penal code -->
+
+        <div class="section-2 flex j-c ">
+            <div class="container-section-2">
+                <!-- Axis 1 -->
+                <div class="slider-wrapper">
+                    <div class="label-container">
+                        <span class="slider-label">Axis 1</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="180" value="90" id="axis1" oninput="updateSlider(this, 1)">
+                        <div class="tooltip" id="tooltip1">90</div>
+                        <div class="axis-value none">0° - 180°</div>
+                    </div>
+                </div>
+
+                <!-- Axis 2 -->
+                <div class="slider-wrapper">
+                    <div class="label-container">
+                        <span class="slider-label">Axis 2</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="180" value="90" id="axis2" oninput="updateSlider(this, 2)">
+                        <div class="tooltip" id="tooltip2">90</div>
+                        <div class="axis-value none">0° - 180°</div>
+                    </div>
+                </div>
+
+                <!-- Axis 3 -->
+                <div class="slider-wrapper">
+                    <div class="label-container">
+                        <span class="slider-label">Axis 3</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="180" value="90" id="axis3" oninput="updateSlider(this, 3)">
+                        <div class="tooltip" id="tooltip3">90</div>
+                        <div class="axis-value none">0° - 180°</div>
+                    </div>
+                </div>
+
+                <!-- Axis 4 -->
+                <div class="slider-wrapper">
+                    <div class="label-container">
+                        <span class="slider-label">Axis 4</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="180" value="90" id="axis4" oninput="updateSlider(this, 4)">
+                        <div class="tooltip" id="tooltip4">90</div>
+                        <div class="axis-value none">0° - 180°</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="pre-programmed-functions-container flex center">
+        <div><button class="btn-style M-10 R-18" type="button">Pick Up</button></div>
+        <div><button class="btn-style M-10 R-18" type="button">Test</button></div>
+        <div><button class="btn-style M-10 R-18" type="button">High five</button></div>
+        <div><button class="btn-style M-10 R-18" type="button">Dance</button></div>
+    </div>
+
+    <section class="section-3">
+        <div class="main-container-about-us">
+            <div class="section-3-heading-container flex center">
+                <h1>About Project</h1>
+            </div>
+
+            <section style="max-width: 900px; margin: 0 auto; padding: 40px 20px; font-family: 'Segoe UI', sans-serif;">
+                <h2 style="font-size: 2rem; margin-bottom: 20px; text-align: center; color: #333;">🤖 Robotic Arm
+                    Control System</h2>
+
+                <p style="font-size: 1.1rem; color: #555; line-height: 1.7; text-align: justify;">
+                    This project demonstrates a custom-built 4-axis robotic arm, designed and developed from scratch
+                    using affordable and recycled materials.
+                    The system is powered by our own microcontroller with a custom PCB and integrates web-based remote
+                    control, allowing real-time motion control from anywhere in the world.
+                    The robotic arm supports both manual and pre-programmed functions, making it suitable for a variety
+                    of educational, research, and automation applications.
+                    With intuitive frontend controls, built-in display navigation, and secure backend communication
+                    using Django, this system showcases an end-to-end IoT + robotics solution.
+                    Applications include learning platforms, light automation tasks, basic pick-and-place operations,
+                    and remote demonstration tools.
+                </p>
+            </section>
+
+
+            <div class="section-3-microcontroller">
+                <div class="microcontroller-foto-container flex center R-18">
+                    <div class="R-18 overflow-H microcontroller-foto-container-2"><img class="microcontroller-foto R-18"
+                            src="./img/microcontroller.jpeg" alt="" srcset=""></div>
+                </div>
+                <div>
+                    <div class="sec3-micro-heading">
+                        <h2> Our Own Microcontroller Custom PCB Designs</h2>
+                    </div>
+                    <div class="microcontroller-features ">
+                        <p style="font-size: 1.1rem; color: #555; line-height: 1.6;">
+                            At the heart of our robotic arm lies a <strong>custom-designed microcontroller PCB</strong>,
+                            engineered specifically for robotics applications. This board is not just a controller —
+                            it's a compact powerhouse designed to provide precise, reliable, and flexible control over
+                            every movement of the arm.
+                        </p>
+
+                        <div style="margin-top: 30px;">
+                            <h3 style="color: #222; margin-bottom: 10px;">Key Features:</h3>
+                            <ul style="padding-left: 20px; font-size: 1.05rem; color: #444; line-height: 1.8;">
+                                <li><strong>Built-in OLED Display (I2C):</strong> 0.96" screen to monitor real-time
+                                    data, angles, or system status directly.</li>
+                                <li><strong>18 Versatile Pins:</strong>
+                                    <ul style="padding-left: 20px; margin-top: 5px;">
+                                        <li>7 GPIOs for input/output control</li>
+                                        <li>I2C and SPI interfaces</li>
+                                        <li>5V and 3.3V regulated output</li>
+                                        <li>Ground pins for flexible circuit connections</li>
+                                        <li>Dedicated SPI pins , MISO,MOSI,CSO,CLK</li>
+                                    </ul>
+                                </li>
+                                <li><strong>3 Built-in Control Buttons:</strong> Easy access for manual control or
+                                    configuration tasks.</li>
+                                <li><strong>USB Type-C Power Input:</strong> Modern and robust, compatible with common
+                                    USB-C cables.</li>
+                            </ul>
+                        </div>
+
+                        <p style="font-size: 1.1rem; color: #555; margin-top: 30px;">
+                            This board not only simplifies the wiring and reduces clutter, but also enhances performance
+                            and modularity for robotic applications. It acts as the brain of our robotic arm, enabling
+                            both manual and remote control with ease.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="sec3-material-used">
+                <h2 style="font-size: 2rem; margin-bottom: 20px; color: #333;">Materials Used &
+                    Design Overview</h2>
+
+                <div style="font-size: 1.1rem; color: #555; line-height: 1.6;">
+                    <p>
+                        Our robotic arm is built using accessible and recycled materials, showcasing not just technical
+                        innovation, but also sustainable design choices.
+                    </p>
+
+                    <ul style="padding-left: 20px; margin-top: 20px; color: #444;">
+                        <li><strong>Acrylic Sheet:</strong> Used for the structural components of the arm due to its
+                            strength, durability, and aesthetic finish.</li>
+                        <li><strong>Recycled PVC Pipe:</strong> Repurposed to serve as the joints and connectors,
+                            providing a lightweight yet robust framework.</li>
+                        <li><strong>Cardboard Platform:</strong> A simple yet effective base structure that supports the
+                            arm securely during operation.</li>
+                        <li><strong>Power Supply:</strong> An old mobile charger has been repurposed as a reliable 5V
+                            power source for the entire system.</li>
+                    </ul>
+
+                    <h3 style="margin-top: 30px; color: #222;">4-Axis Robotic Arm Mechanism</h3>
+                    <p>
+                        The robotic arm is designed with <strong>4 degrees of freedom</strong>, powered by <strong>4
+                            SG90 servo motors</strong>. These lightweight and cost-effective motors allow smooth
+                        movement across four independent axes, enabling complex actions such as lifting, rotating, and
+                        tilting.
+                    </p>
+                    <p>
+                        This setup demonstrates precise control and movement, all coordinated through our custom-built
+                        PCB and a user-friendly web interface.
+                    </p>
+                </div>
+
+                <div class="sec-3-programming MT-20">
+                    <div class="R-18 overflow-H sec-blockdiagram-container flex center">
+                        <img class=" R-18" src="./img/bloackdiagram.png" alt="" srcset="">
+                    </div>
+                    <h2 style="font-size: 2rem; margin-bottom: 20px; color: #333;">Programming &
+                        Functionality</h2>
+
+                    <p style="font-size: 1.1rem; color: #555; line-height: 1.6;">
+                        The robotic arm system is powered by a combination of hardware-level programming, modern web
+                        technologies, and backend integration to offer real-time control and automation.
+                    </p>
+
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #222; margin-bottom: 10px;">Microcontroller Programming</h3>
+                        <ul style="padding-left: 20px; font-size: 1.05rem; color: #444; line-height: 1.8;">
+                            <li><strong>Languages Used:</strong> C / C++</li>
+                            <li><strong>Libraries:</strong> <code>Servo.h</code>, <code>WiFi.h</code>,
+                                <code>HTTPServer.h</code>, <code>OLED.h</code>
+                            </li>
+                            <li>
+                                The custom microcontroller features a menu system navigated using 3 buttons:
+                                <strong>Select</strong>, <strong>Up</strong>, and <strong>Down</strong>. Functions
+                                include:
+                                <ul style="padding-left: 20px;">
+                                    <li>Robot Calibration / Testing</li>
+                                    <li>Connection Status Check</li>
+                                    <li>Pre-Programmed Motions</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #222; margin-bottom: 10px;"> Web Interface</h3>
+                        <ul style="padding-left: 20px; font-size: 1.05rem; color: #444; line-height: 1.8;">
+                            <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript</li>
+                            <li>
+                                Control Panel Features:
+                                <ul style="padding-left: 20px;">
+                                    <li>Real-time control of 4 motor axes (0°–180°)</li>
+                                    <li>Connectivity Test Button</li>
+                                    <li>Trigger Pre-Defined Robotic Motions</li>
+                                    <li>Global Access via Internet</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #222; margin-bottom: 10px;"> Backend Integration</h3>
+                        <p style="font-size: 1.05rem; color: #444;">
+                            The backend is built with <strong>Python using Django</strong>. It handles secure API
+                            endpoints for receiving commands from the web interface. Here's how the interaction works:
+                        </p>
+
+                        <ul style="padding-left: 20px; font-size: 1.05rem; color: #444; line-height: 1.8;">
+                            <li>User clicks a button on the control panel</li>
+                            <li>Frontend sends a secure HTTP request with authentication cookies</li>
+                            <li>Backend verifies the user and forwards the command to the robotic arm</li>
+                            <li>Robot executes the motion or action in real time</li>
+                        </ul>
+                    </div>
+
+                    <p style="margin-top: 30px; font-size: 1.1rem; color: #555;">
+                        This fully integrated system allows users to operate the robotic arm from any location, ensuring
+                        flexibility, security, and ease of access.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

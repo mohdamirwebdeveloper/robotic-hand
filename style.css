@@ -1,0 +1,462 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Outfit", sans-serif;
+}
+
+.root {
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+}
+
+.flex {
+    display: flex;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+}
+
+.j-c {
+    justify-content: center;
+}
+
+.a-c {
+    align-items: center;
+}
+
+.overflow-H {
+    overflow: hidden;
+}
+
+.R-5 {
+    border-radius: 5px;
+}
+
+.R-10 {
+    border-radius: 10px;
+}
+
+
+.R-18 {
+    border-radius: 18px;
+}
+
+.M-5 {
+    margin: 5px;
+}
+
+.M-10 {
+    margin: 10px;
+}
+
+.MT-20 {
+    margin-top: 20px;
+}
+
+.none {
+    display: none;
+}
+
+.heading-container {
+    width: 100%;
+    height: 10vh;
+    justify-content: space-between;
+}
+
+.heading {
+    margin: 10px;
+
+}
+
+.manu {
+    margin: 10px;
+    margin-right: 2rem;
+}
+
+#repository {
+    width: 10vw;
+    height: 8vh;
+    outline: none;
+    background-color: #141a23;
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    transition: ease-in-out 300ms;
+}
+
+#repository:hover {
+    background-color: #1b2738;
+    cursor: pointer;
+    scale: 1.1;
+}
+
+.section-1 {
+    width: 50%;
+    height: 100vh;
+    user-select: none;
+}
+
+.section-2 {
+    width: 50%;
+    height: 100vh;
+    margin-top: 5%;
+}
+
+.R-H-img {
+    width: 90%;
+    height: 80%;
+
+
+}
+
+/* Section - 2 control penal code*/
+
+.container-section-2 {
+    width: 80%;
+}
+
+
+h1 {
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.slider-wrapper {
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.label-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.slider-label {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+.slider-container {
+    position: relative;
+    height: 40px;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4vh;
+    background: #ddd;
+    border-radius: 10px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    background: #f1c40f;
+    border: 4px solid white;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background: #f1c40f;
+    border: 4px solid white;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: absolute;
+    background: #f1c40f;
+    color: black;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 6px;
+    top: -40px;
+    transform: translateX(-50%);
+    transition: left 0.1s ease;
+}
+
+.axis-value {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    font-size: 14px;
+    color: #444;
+}
+
+.pre-programmed-functions-container {
+    width: 100%;
+    height: auto;
+
+
+}
+
+.btn-style {
+    width: 10vw;
+    height: 8vh;
+    outline: none;
+    background-color: #f1c40f;
+    border: none;
+    color: #313131;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    transition: ease-in-out 200ms;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.btn-style:hover {
+    cursor: pointer;
+    scale: 1.1;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+}
+
+.btn-style:active {
+    background-color: #deb200;
+}
+
+/* Section 3 About the project */
+
+.microcontroller-foto-container {
+    width: 100%;
+    height: 70vh;
+    overflow: hidden;
+
+}
+
+
+
+.microcontroller-foto-container-2 {
+    width: 60%;
+    height: 100%;
+}
+
+.microcontroller-foto-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: 2px 2px 3px rgba(131, 130, 130, 0.496);
+}
+
+
+.section-3-heading-container {
+
+    margin: 15px;
+}
+
+.section-3-heading-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+
+}
+
+.microcontroller-features {
+    width: 60%;
+    margin: 15px;
+    margin-left: 3rem;
+
+}
+
+.microcontroller-features p {
+    line-height: 190%;
+}
+
+.sec3-micro-heading {
+    width: 60%;
+    margin: 15px;
+    margin-left: 3rem;
+    font-size: 24px;
+    margin-top: 5%;
+
+}
+
+.sec3-material-used {
+    width: 60%;
+    margin: 15px;
+    margin-left: 3rem;
+    font-size: 24px;
+    margin-top: 5%;
+}
+
+.sec-blockdiagram-container {
+    width: 90vw;
+    height: 60vh;
+}
+
+.sec-blockdiagram-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* optimization  for small screen devices like cell phone my phone*/
+
+@media (max-width: 575.98px) {
+
+
+    .section-3-heading-container h1 {
+        font-size: 32px;
+        font-weight: bold;
+
+    }
+
+    .heading {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin: 0;
+    }
+
+    .heading h1 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    #repository {
+        width: fit-content;
+        height: 6vh;
+        outline: none;
+        background-color: #1b2738;
+        border: none;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-size: 16px;
+        transition: ease-in-out 300ms;
+        box-shadow: 2px 2px 4px rgba(131, 130, 130, 0.596);
+    }
+
+    .heading-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 10vh;
+        justify-content: space-between;
+    }
+
+    .root {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: fit-content;
+
+    }
+
+    .section-1 {
+        width: 100%;
+        height: fit-content;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background: #f1c40f;
+        border: 4px solid white;
+        cursor: pointer;
+        box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 2;
+    }
+
+    .section-2 {
+        margin-top: 40px;
+        width: 100%;
+        height: fit-content;
+    }
+
+    .btn-style {
+        width: fit-content;
+        height: 10vh;
+        outline: none;
+        background-color: #ffd325;
+        border: none;
+        color: #313131;
+        font-weight: bold;
+        padding: 15px;
+        
+        text-align: center;
+        font-size: 16px;
+        transition: ease-in-out 200ms;
+        box-shadow: 2px 2px 3px rgba(131, 130, 130, 0.496);
+        margin: 0;
+        margin-right: 6px;
+    }
+
+    .section-3 {
+        margin: 0;
+        margin-top: 40px;
+    }
+
+    .microcontroller-foto-container-2 {
+        width: 90%;
+
+        border-radius: 18px;
+    }
+
+    .microcontroller-foto-container-2 img {
+        border-radius: 18px;
+    }
+
+    .sec3-micro-heading {
+        width: 90%;
+        margin: 0;
+        padding-left: 15px;
+    }
+
+    .microcontroller-features {
+        width: 90%;
+        margin: 0;
+        padding-left: 15px;
+    }
+
+    .sec3-material-used {
+        width: 90%;
+        margin: 0;
+        padding-left: 15px;
+        margin-top: 30px;
+        line-height: 190%;
+    }
+    .main-container-about-us{
+        line-height: 190%;
+    }
+
+    .sec3-micro-heading{
+        line-height: 190%;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    .pre-programmed-functions-container{
+        overflow: hidden;
+        height: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+}
