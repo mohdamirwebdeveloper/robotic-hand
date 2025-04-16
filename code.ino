@@ -1,7 +1,7 @@
 /*
   ------------------------------------------------------
   Project Title   : ESP8266 OLED screen based Robotic Arm
-  Version         : 1.0
+  Version         : 1.1
   Author          : Mohd Amir
   Contributor     : Sunil Kumar
   Project Type    : Major Project
@@ -79,12 +79,18 @@ const unsigned char epd_bitmap_Checklink [] PROGMEM = {
 	0x23, 0xc4, 0x04, 0x20, 0x01, 0x80, 0x01, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+const unsigned char epd_bitmap_About [] PROGMEM = {
+	0x00, 0x00, 0x01, 0xc0, 0x01, 0xc0, 0x01, 0xc0, 0x01, 0xc0, 0x01, 0xc0, 0x01, 0xc0, 0x01, 0xc0, 
+	0x01, 0xc0, 0x01, 0xc0, 0x00, 0x00, 0x01, 0xc0, 0x01, 0xc0, 0x01, 0xc0, 0x00, 0x00, 0x00, 0x00
+};
+
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 496)
-const int epd_bitmap_allArray_LEN = 4;
-const unsigned char* epd_bitmap_allArray[4] = {
+const int epd_bitmap_allArray_LEN = 5;
+const unsigned char* epd_bitmap_allArray[5] = {
 	epd_bitmap_RoboticHandicon,
 	epd_bitmap_Checklink,
 	epd_bitmap_TestIcon,
+  epd_bitmap_About,
   epd_bitmap_Outline_select
 };
 
@@ -114,12 +120,13 @@ void startAnimation() {
   display.clearDisplay();
  }
 
-int num_item = 3; //<-----------Also update this variable if the manu_name no items are changed 
+int num_item = 4; //<-----------Also update this variable if the manu_name no items are changed 
 
-char manu_name[3] [20] = {
+char manu_name[4] [20] = {
   {"Preset Motions"},
   {"Link"},
-  {"Test"}
+  {"Test"},
+  {"About"}
 };
 
 int item_selected = 0;
@@ -184,7 +191,7 @@ void loop() {
 
   display.drawBitmap(4,46,epd_bitmap_allArray[next_item],16,16,SSD1306_WHITE);
 
-  display.drawBitmap(0,22,epd_bitmap_allArray[3],128,21,SSD1306_WHITE);
+  display.drawBitmap(0,22,epd_bitmap_allArray[4],128,21,SSD1306_WHITE);
   display.display();
   delay(500);
 }
