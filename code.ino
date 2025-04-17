@@ -26,19 +26,33 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <Servo.h>
 
-#define D2 5  //Bhai D2 ki pin SDA se connect ker.
-#define D1 4  //Bhai D1 ki pin SCL se connect ker.
-//<--------------------------------------------------buttons-------------------------------------------------->
+#define D2 5  //Bhai D2 ki pin SCL se connect ker.
+#define D1 4  //Bhai D1 ki pin SDL se connect ker.
+//<---------------------------------buttons------------------------------------->
 #define BUTTON_UP 14    // D5
 #define BUTTON_DOWN 12  // D6
 #define BUTTON_A 13     // D7
-
+//<-----------------------------Servo Pins-------------------------------->
+const int pinX = 0;  //D3
+const int pinY = 1;  //D10
+const int pinZ = 2;  //D4
+const int pinG = 3;  //D9
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+//<-----------------------Wifi credential and port-------------------------->
+const char* ssid = "Robotic_hand";
+const char* password = "12345678";
+ESP8266WebServer server(80);
+
+Servo servoX, servoY, servoZ, servoG;
+
 
 // 'Outline-select', 128x21px
 const unsigned char epd_bitmap_Outline_select[] PROGMEM = {
@@ -120,6 +134,58 @@ void startAnimation() {
   display.clearDisplay();
 }
 
+void LoadingBar(int timeDelay) {
+  int barWidth = 80;
+  int barHeight = 10;
+  int barX = (SCREEN_WIDTH - barWidth) / 2;
+  int barY = 35;
+
+  display.drawRect(barX, barY, barWidth, barHeight, WHITE);
+  display.display();
+
+
+  for (int i = 0; i <= 100; i += 2) {
+    int fillWidth = (i * (barWidth - 2)) / 100;
+    display.fillRect(barX + 1, barY + 1, fillWidth, barHeight - 2, WHITE);
+
+
+    //presentage number bhai
+    display.fillRect((SCREEN_WIDTH - 20) / 2, barY + 15, 30, 10, BLACK);
+    display.setCursor((SCREEN_WIDTH - 20) / 2, barY + 15);
+    display.setTextColor(WHITE);
+    display.printf("%d%%", i);
+
+
+    display.display();
+    delay(timeDelay);
+  }
+}
+
+void showAbout() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+
+
+  display.setCursor((128 - 96) / 2, 2);
+  display.println("Robotic Arm ");
+
+
+  display.setCursor((128 - 96) / 2, 20);
+  display.println("By Amir & Sunil");
+
+
+  display.setCursor((128 - 94) / 2, 38);
+  display.println("Guided by Anuj sir");
+
+  display.display();
+
+  delay(3000);
+}
+
+
+
+
 void highfive() {
   display.clearDisplay();
 
@@ -129,46 +195,25 @@ void highfive() {
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("High Five...");
 
-  // Draw progress bar outline
-  int barWidth = 80;
-  int barHeight = 10;
-  int barX = (SCREEN_WIDTH - barWidth) / 2;
-  int barY = 35;
 
-  display.drawRect(barX, barY, barWidth, barHeight, WHITE);
-  display.display();
-
-  // Fill progress bar with animation
-  for (int i = 0; i <= 100; i += 2) {
-    int fillWidth = (i * (barWidth - 2)) / 100;
-    display.fillRect(barX + 1, barY + 1, fillWidth, barHeight - 2, WHITE);
-
-    // Optional: Show percentage
-    // Clear the previous percentage text by drawing a black box over it
-    display.fillRect((SCREEN_WIDTH - 20) / 2, barY + 15, 30, 10, BLACK);
-    display.setCursor((SCREEN_WIDTH - 20) / 2, barY + 15);
-    display.setTextColor(WHITE);
-    display.printf("%d%%", i);
-
-
-    display.display();
-    delay(90);
-  }
+  LoadingBar(90);
 }
 
 
 void test() {
   display.clearDisplay();
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("Testing...");
+  LoadingBar(60);
   display.display();
   delay(1000);
 }
 
 void pickup() {
   display.clearDisplay();
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("picking up...");
+  LoadingBar(60);
   display.display();
   delay(1000);
 }
@@ -176,10 +221,52 @@ void pickup() {
 void Dance() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
-  display.println("In kutto ke samne mat nachna wasanti..");
+  display.println("Danceing...");
   display.display();
   delay(1000);
 }
+
+void testServoandConnection() {
+  display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
+  display.println("Please wait..");
+  LoadingBar(60);
+  display.display();
+  delay(1000);
+}
+
+//<----------web interface Get request handler---------------->
+void handleServoPos() {
+  if (server.hasArg("x") && server.hasArg("y") && server.hasArg("z") && server.hasArg("g")) {
+    int x = server.arg("x").toInt();
+    int y = server.arg("y").toInt();
+    int z = server.arg("z").toInt();
+    int g = server.arg("g").toInt();
+
+    // Clamp values to 0–180 (servo safe range)
+    x = constrain(x, 0, 180);
+    y = constrain(y, 0, 180);
+    z = constrain(z, 0, 180);
+    g = constrain(g, 0, 180);
+
+    // Move servos
+    servoX.write(x);
+    servoY.write(y);
+    servoZ.write(z);
+    servoG.write(g);
+    
+    Serial.println(x);
+    Serial.println(y);
+    Serial.println(z);
+    Serial.println(g);
+
+    Serial.printf("Received: x=%d y=%d z=%d g=%d\n", x, y, z, g);
+    server.send(200, "text/plain", "OK");
+  } else {
+    server.send(400, "text/plain", "Missing parameters");
+  }
+}
+
 
 int num_item = 4;  //<-----------Also update this variable if you updatethe manu_name
 
@@ -207,6 +294,7 @@ unsigned long lastButtonPress = 0;
 const int debounceDelay = 200;
 
 void setup() {
+
   Wire.begin(D2, D1);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -220,9 +308,43 @@ void setup() {
   pinMode(BUTTON_UP, INPUT_PULLUP);
   pinMode(BUTTON_DOWN, INPUT_PULLUP);  //Pull Uped by default so you have to connect the Pins to GND in order to activate it
   pinMode(BUTTON_A, INPUT_PULLUP);
+
+  //<---------------Servo Axis--------------->
+  servoX.attach(pinX,500,2400);
+  servoY.attach(pinY,500,2400);
+  servoZ.attach(pinZ,500,2400);
+  servoG.attach(pinG,500,2400);
+
+
+  //<-------------------Server setup------------------------->
+  Serial.begin(115200);
+
+
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("Connected to WiFi");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  
+  server.on("/servoPos", HTTP_GET, handleServoPos);
+
+  
+  server.begin();
+  Serial.println("Server started");
 }
 
 void loop() {
+  server.handleClient();
+
   if (digitalRead(BUTTON_UP) == LOW && millis() - lastButtonPress > debounceDelay) {
     item_selected -= 1;
     if (item_selected < 0) item_selected = num_item - 1;
@@ -268,6 +390,7 @@ void loop() {
 
 
   if (digitalRead(BUTTON_A) == LOW && millis() - lastButtonPress > debounceDelay) {
+    lastButtonPress = millis();
     if (item_selected == 0) {
       int preset_num_item = 5;
       int preset_item_selected = 0;
@@ -326,6 +449,14 @@ void loop() {
       }
     }
 
-    lastButtonPress = millis();
+    if (item_selected == 1) {
+      testServoandConnection();
+    }
+    if (item_selected == 2) {
+      testServoandConnection();
+    }
+    if (item_selected == 3) {
+      showAbout();
+    }
   }
 }
