@@ -51,8 +51,11 @@ const char* ssid = "Robotic_hand";
 const char* password = "12345678";
 ESP8266WebServer server(80);
 
-Servo servoX, servoY, servoZ, servoG;
+bool awaitingPing = false;
+unsigned long pingStartTime = 0;
+bool linkConfirmed = false;
 
+Servo servoX, servoY, servoZ, servoG;
 
 // 'Outline-select', 128x21px
 const unsigned char epd_bitmap_Outline_select[] PROGMEM = {
@@ -220,7 +223,7 @@ void pickup() {
 
 void Dance() {
   display.clearDisplay();
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("Danceing...");
   display.display();
   delay(1000);
@@ -228,12 +231,27 @@ void Dance() {
 
 void testServoandConnection() {
   display.clearDisplay();
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("Please wait..");
   LoadingBar(60);
   display.display();
   delay(1000);
 }
+
+void checkWebUILink() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setCursor(0, 20);
+  display.println("Checking Web UI...");
+  display.println("Please click TEST on UI.");
+  display.display();
+
+  awaitingPing = true;
+  linkConfirmed = false;
+  delay(4000);
+  pingStartTime = millis();
+}
+
 
 //<----------web interface Get request handler---------------->
 void handleServoPos() {
@@ -254,13 +272,16 @@ void handleServoPos() {
     servoY.write(y);
     servoZ.write(z);
     servoG.write(g);
-    
+
     Serial.println(x);
     Serial.println(y);
     Serial.println(z);
     Serial.println(g);
 
     Serial.printf("Received: x=%d y=%d z=%d g=%d\n", x, y, z, g);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    server.sendHeader("Access-Control-Allow-Headers", "*");
     server.send(200, "text/plain", "OK");
   } else {
     server.send(400, "text/plain", "Missing parameters");
@@ -310,10 +331,10 @@ void setup() {
   pinMode(BUTTON_A, INPUT_PULLUP);
 
   //<---------------Servo Axis--------------->
-  servoX.attach(pinX,500,2400);
-  servoY.attach(pinY,500,2400);
-  servoZ.attach(pinZ,500,2400);
-  servoG.attach(pinG,500,2400);
+  servoX.attach(pinX, 500, 2400);
+  servoY.attach(pinY, 500, 2400);
+  servoZ.attach(pinZ, 500, 2400);
+  servoG.attach(pinG, 500, 2400);
 
 
   //<-------------------Server setup------------------------->
@@ -334,16 +355,40 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  
+
   server.on("/servoPos", HTTP_GET, handleServoPos);
 
-  
+  server.on("/ping", []() {
+    if (awaitingPing) {
+      linkConfirmed = true;
+      awaitingPing = false;
+    }
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    server.sendHeader("Access-Control-Allow-Headers", "*");
+    server.send(200, "text/plain", "pong");
+  });
+
+
   server.begin();
   Serial.println("Server started");
 }
 
 void loop() {
   server.handleClient();
+
+  //<---------To test the Link between the ESP8266 and the WEB UI---------------->
+
+  if (linkConfirmed) {
+    display.clearDisplay();
+    display.setCursor(30, 25);
+    display.println("Connected!");
+    display.display();
+    delay(4000);
+    linkConfirmed = false;
+  }
+
+
 
   if (digitalRead(BUTTON_UP) == LOW && millis() - lastButtonPress > debounceDelay) {
     item_selected -= 1;
@@ -390,7 +435,10 @@ void loop() {
 
 
   if (digitalRead(BUTTON_A) == LOW && millis() - lastButtonPress > debounceDelay) {
+    while (digitalRead(BUTTON_A) == LOW);  
+    delay(200);
     lastButtonPress = millis();
+
     if (item_selected == 0) {
       int preset_num_item = 5;
       int preset_item_selected = 0;
@@ -450,7 +498,7 @@ void loop() {
     }
 
     if (item_selected == 1) {
-      testServoandConnection();
+      checkWebUILink();
     }
     if (item_selected == 2) {
       testServoandConnection();
