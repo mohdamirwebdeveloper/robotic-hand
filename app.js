@@ -1,9 +1,8 @@
-// Delay map to store timeout IDs for each axis
 const delayMap = {};
 const axisValues = { 1: 0, 2: 0, 3: 0, 4: 0 };
 
-// Replace with your ESP8266's actual IP
-const ESP8266_IP = "192.168.43.69";  // <- Change this to your actual ESP IP
+
+const ESP8266_IP = "192.168.43.69";  // <----------IP of esp8266
 
 function updateSlider(slider, axisNumber) {
     const tooltip = document.getElementById("tooltip" + axisNumber);
@@ -52,15 +51,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function testESPLink() {
-    fetch("http://192.168.43.69/ping")  // Replace with actual ESP IP
+    const url = `http://${ESP8266_IP}/ping`
+    fetch(url) 
         .then(response => {
             if (response.ok) {
-                alert("ESP8266 is connected!");
+                alert("Pong");
             } else {
-                alert("ESP did not respond.");
+                alert("Not connected");
             }
         })
         .catch(() => {
-            alert("ESP8266 not reachable.");
+            alert("Time out");
         });
+}
+
+function PresetMotions(PresetMotionName){
+    const url = `http://${ESP8266_IP}/Preset?func=${PresetMotionName}`;
+    fetch(url)
+    .then(response =>{
+        if(response.ok){
+            alert(`Function ${PresetMotionName} done successful`);
+        }
+        else{
+            alert("Please check PING");
+        }
+    })
+    .catch(()=>{
+        alert('Some Error Accured!');
+    })
 }
