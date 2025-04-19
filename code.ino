@@ -1,7 +1,7 @@
 /*
   ------------------------------------------------------
   Project Title   : ESP8266 OLED screen based Robotic Arm
-  Version         : 1.1
+  Version         : 1.2
   Author          : Mohd Amir
   Contributor     : Sunil Kumar
   Project Type    : Major Project
@@ -54,6 +54,7 @@ ESP8266WebServer server(80);
 bool awaitingPing = false;
 unsigned long pingStartTime = 0;
 bool linkConfirmed = false;
+bool stopreverse180 = false;
 
 Servo servoX, servoY, servoZ, servoG;
 
@@ -119,7 +120,7 @@ void startAnimation() {
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2);
   display.println("Starting...");
   display.display();
-  delay(1500);
+  delay(1000);
   display.clearDisplay();
   for (int i = 0; i < 3; i++) {
     display.clearDisplay();
@@ -130,10 +131,10 @@ void startAnimation() {
       16, 16,
       SSD1306_WHITE);
     display.display();
-    delay(1000);
+    delay(800);
   }
 
-  delay(500);
+  delay(300);
   display.clearDisplay();
 }
 
@@ -252,8 +253,37 @@ void checkWebUILink() {
   pingStartTime = millis();
 }
 
+// ek function jo 180 degree motion kerwayga base ka
+void Do180() {
+  display.clearDisplay();
+  LoadingBar(20);
+  display.display();
+  if (stopreverse180) {
+    for (int i = 0; i >= 0; i--) {
+      servoG.write(i);
+      delay(15);
+    }
+  }
+  for (int i = 0; i < 180; i++) {
+    servoG.write(i);
+    delay(15);
+  }
+
+  stopreverse180 = true;
+}
+
 
 //<----------web interface Get request handler---------------->
+
+//Cors policy ko ignor kerne ke liye
+void sendWithCORS(int code, String contentType, String message) {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  server.sendHeader("Access-Control-Allow-Headers", "*");
+  server.send(code, contentType, message);
+}
+
+
 void handleServoPos() {
   if (server.hasArg("x") && server.hasArg("y") && server.hasArg("z") && server.hasArg("g")) {
     int x = server.arg("x").toInt();
@@ -273,18 +303,39 @@ void handleServoPos() {
     servoZ.write(z);
     servoG.write(g);
 
-    Serial.println(x);
-    Serial.println(y);
-    Serial.println(z);
-    Serial.println(g);
+    // Serial.println(x);
+    // Serial.println(y);
+    // Serial.println(z);
+    // Serial.println(g);
 
-    Serial.printf("Received: x=%d y=%d z=%d g=%d\n", x, y, z, g);
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    server.sendHeader("Access-Control-Allow-Headers", "*");
-    server.send(200, "text/plain", "OK");
+    sendWithCORS(200, "text/plain", "ok");
   } else {
     server.send(400, "text/plain", "Missing parameters");
+  }
+}
+
+
+
+//<-------------Handle Preset motions------------------>
+void Preset() {
+  if (server.hasArg("func")) {
+    String functionToDo = server.arg("func");
+    functionToDo.trim();
+    // Serial.print("func received: ");
+    // Serial.println(server.arg("func"));
+
+    if (functionToDo.equals("Do180")) {
+      Do180();
+      sendWithCORS(200, "text/plain", "Function Do180 executed successfully");
+    } else if (functionToDo.equals("Dance")) {
+      Dance();
+      sendWithCORS(200, "text/plain", "Function Dance executed successfully");
+
+    } else {
+      sendWithCORS(503, "text/plain", "Not Defined !");
+    }
+  } else {
+    sendWithCORS(400, "text/plain", "Missing Perameters");
   }
 }
 
@@ -300,7 +351,7 @@ char manu_name[4][20] = {
 
 char preset_motions_manu[5][20] = {
   { "High Five" },
-  { "Test" },
+  { "Do 180" },
   { "Pick up" },
   { "Dance" },
   { "Main Manu" }
@@ -315,6 +366,11 @@ unsigned long lastButtonPress = 0;
 const int debounceDelay = 200;
 
 void setup() {
+  //<---Priortiy for servo-------->
+  servoX.attach(pinX, 500, 2400);
+  servoY.attach(pinY, 500, 2400);
+  servoZ.attach(pinZ, 500, 2400);
+  servoG.attach(pinG, 500, 2400);
 
   Wire.begin(D2, D1);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -331,47 +387,47 @@ void setup() {
   pinMode(BUTTON_A, INPUT_PULLUP);
 
   //<---------------Servo Axis--------------->
-  servoX.attach(pinX, 500, 2400);
-  servoY.attach(pinY, 500, 2400);
-  servoZ.attach(pinZ, 500, 2400);
-  servoG.attach(pinG, 500, 2400);
 
 
   //<-------------------Server setup------------------------->
-  Serial.begin(115200);
+  // Serial.begin(115200);
 
 
 
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
+  // Serial.print("Connecting to WiFi");
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    // Serial.print(".");
   }
 
-  Serial.println("");
-  Serial.println("Connected to WiFi");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-
+  // Serial.println("");
+  // Serial.println("Connected to WiFi");
+  // Serial.print("IP address: ");
+  // Serial.println(WiFi.localIP());
+  
+  display.clearDisplay();
+  display.setCursor(20, 32);
+  display.println(WiFi.localIP());
+  display.display();
+  delay(3000);
 
   server.on("/servoPos", HTTP_GET, handleServoPos);
+  server.on("/Preset", HTTP_GET, Preset);
 
   server.on("/ping", []() {
     if (awaitingPing) {
       linkConfirmed = true;
       awaitingPing = false;
     }
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    server.sendHeader("Access-Control-Allow-Headers", "*");
-    server.send(200, "text/plain", "pong");
+    sendWithCORS(200, "text/plain", "PONG");
   });
 
 
   server.begin();
-  Serial.println("Server started");
+  // Serial.println("Server started");
 }
 
 void loop() {
@@ -435,7 +491,8 @@ void loop() {
 
 
   if (digitalRead(BUTTON_A) == LOW && millis() - lastButtonPress > debounceDelay) {
-    while (digitalRead(BUTTON_A) == LOW);  
+    while (digitalRead(BUTTON_A) == LOW)
+      ;
     delay(200);
     lastButtonPress = millis();
 
@@ -488,10 +545,10 @@ void loop() {
 
         if (digitalRead(BUTTON_A) == LOW && millis() - preset_lastButtonPress > preset_debounceDelay) {
           if (preset_item_selected == 0) highfive();
-          if (preset_item_selected == 1) test();
+          if (preset_item_selected == 1) Do180();
           if (preset_item_selected == 2) pickup();
           if (preset_item_selected == 3) Dance();
-          if (preset_item_selected == 4) break;
+          if (preset_item_selected == 4) delay(300); break;
           preset_lastButtonPress = millis();
         }
       }
