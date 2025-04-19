@@ -1,5 +1,5 @@
 <!--
-Version = 1.0.1v
+Version = 1.0.3v
 Project name : Control penal for Robotic Arm
 
 Project Desctption : Its a control penal in which you can control a 4 axis freedom robotic arm
@@ -112,10 +112,11 @@ Group - 02
         </div>
     </div>
     <div class="pre-programmed-functions-container flex center">
-        <div><button class="btn-style M-10 R-18" type="button">Pick Up</button></div>
-        <div><button class="btn-style M-10 R-18" type="button" onclick="testESPLink()">Test</button></div>
+        <!--<div><button class="btn-style M-10 R-18" type="button">Pick Up</button></div>-->
+        <div><button class="btn-style M-10 R-18" type="button" onclick="PresetMotions('Do180')">Do 180</button></div>
+        <div><button class="btn-style M-10 R-18" type="button" onclick="testESPLink()">Ping</button></div>
         <div><button class="btn-style M-10 R-18" type="button">High five</button></div>
-        <div><button class="btn-style M-10 R-18" type="button">Dance</button></div>
+        <div><button class="btn-style M-10 R-18" type="button" onclick="PresetMotions('Dance')">Dance</button></div>
     </div>
 
     <section class="section-3">
