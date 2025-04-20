@@ -1,34 +1,8 @@
-/*
-  ------------------------------------------------------
-  Project Title   : ESP8266 OLED screen based Robotic Arm
-  Version         : 1.2
-  Author          : Mohd Amir
-  Contributor     : Sunil Kumar
-  Project Type    : Major Project
-  ------------------------------------------------------
-
-  Description:
-  This project implements an interactive menu system using an ESP8266
-  microcontroller with a 0.96" I2C OLED display. It features a smooth
-  UI experience with bitmap icons, animated startup screen, and
-  navigation using active-low push buttons.
-
-  Designed as a versatile interface console, this system can be easily
-  adapted for various applications like motion presets, testing routines,
-  and device linking. Clean aesthetics and logical flow ensure both
-  usability and expandability for embedded solutions.
-
-  Developed with passion and precision to serve as a solid foundation
-  for real-world IoT and embedded menu-driven applications.
-*/
-
-
 #include <Wire.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <Servo.h>
 
 #define D2 5  //Bhai D2 ki pin SCL se connect ker.
 #define D1 4  //Bhai D1 ki pin SDL se connect ker.
@@ -36,29 +10,25 @@
 #define BUTTON_UP 14    // D5
 #define BUTTON_DOWN 12  // D6
 #define BUTTON_A 13     // D7
-//<-----------------------------Servo Pins-------------------------------->
-const int pinX = 0;  //D3
-const int pinY = 1;  //D10
-const int pinZ = 2;  //D4
-const int pinG = 3;  //D9
-
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1
+#define ROBOT_IP "192.168.43.69"
+
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-//<-----------------------Wifi credential and port-------------------------->
+
+WiFiClient client;
+
 const char* ssid = "Robotic_hand";
 const char* password = "12345678";
-ESP8266WebServer server(80);
 
-bool awaitingPing = false;
-unsigned long pingStartTime = 0;
-bool linkConfirmed = false;
-bool stopreverse180 = false;
+//<-----------------Change this to your Network IP------------------------>
+IPAddress local_IP(192, 168, 43, 70);
+IPAddress gateway(192, 168, 43, 1);       
+IPAddress subnet(255, 255, 255, 0); 
 
-Servo servoX, servoY, servoZ, servoG;
+//<---------------Bit MAP image------------------>
 
-// 'Outline-select', 128x21px
 const unsigned char epd_bitmap_Outline_select[] PROGMEM = {
   0x1f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x80, 0x00,
   0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00,
@@ -125,7 +95,7 @@ void startAnimation() {
   for (int i = 0; i < 3; i++) {
     display.clearDisplay();
     display.drawBitmap(
-      (SCREEN_WIDTH - 16) / 2,  // center 16x16 bitmap
+      (SCREEN_WIDTH - 16) / 2,
       (SCREEN_HEIGHT - 16) / 2,
       epd_bitmap_allArray[i],
       16, 16,
@@ -187,23 +157,6 @@ void showAbout() {
   delay(3000);
 }
 
-
-
-
-void highfive() {
-  display.clearDisplay();
-
-  // Show text message
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
-  display.println("High Five...");
-
-
-  LoadingBar(90);
-}
-
-
 void test() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
@@ -213,22 +166,6 @@ void test() {
   delay(1000);
 }
 
-void pickup() {
-  display.clearDisplay();
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
-  display.println("picking up...");
-  LoadingBar(60);
-  display.display();
-  delay(1000);
-}
-
-void Dance() {
-  display.clearDisplay();
-  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
-  display.println("Danceing...");
-  display.display();
-  delay(1000);
-}
 
 void testServoandConnection() {
   display.clearDisplay();
@@ -238,104 +175,96 @@ void testServoandConnection() {
   display.display();
   delay(1000);
 }
+void sendCommand(const char* funcName) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String url = "http://" ROBOT_IP "/Preset?func=" + String(funcName);
+    http.begin(client,url);
 
-void checkWebUILink() {
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setCursor(0, 20);
-  display.println("Checking Web UI...");
-  display.println("Please click TEST on UI.");
-  display.display();
+    int httpCode = http.GET();
 
-  awaitingPing = true;
-  linkConfirmed = false;
-  delay(4000);
-  pingStartTime = millis();
+    if (httpCode > 0) {
+      String payload = http.getString();
+      Serial.println("Response: " + payload);
+    } else {
+      Serial.println("GET request failed. Code: " + String(httpCode));
+    }
+
+    http.end();
+  } else {
+    Serial.println("WiFi not connected");
+  }
 }
 
-// ek function jo 180 degree motion kerwayga base ka
-void Do180() {
+void highfive() {
   display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  display.println("Dancing...");
   LoadingBar(20);
   display.display();
-  if (stopreverse180) {
-    for (int i = 0; i >= 0; i--) {
-      servoG.write(i);
-      delay(15);
-    }
-  }
-  for (int i = 0; i < 180; i++) {
-    servoG.write(i);
-    delay(15);
-  }
-
-  stopreverse180 = true;
+  sendCommand("HighFive");
+  delay(500);
 }
 
-
-//<----------web interface Get request handler---------------->
-
-//Cors policy ko ignor kerne ke liye
-void sendWithCORS(int code, String contentType, String message) {
-  server.sendHeader("Access-Control-Allow-Origin", "*");
-  server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  server.sendHeader("Access-Control-Allow-Headers", "*");
-  server.send(code, contentType, message);
+void Do180() {
+  display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  display.println("Doing 180");
+  LoadingBar(20);
+  display.display();
+  sendCommand("Do180");
+  delay(500);
 }
 
-
-void handleServoPos() {
-  if (server.hasArg("x") && server.hasArg("y") && server.hasArg("z") && server.hasArg("g")) {
-    int x = server.arg("x").toInt();
-    int y = server.arg("y").toInt();
-    int z = server.arg("z").toInt();
-    int g = server.arg("g").toInt();
-
-    // Clamp values to 0–180 (servo safe range)
-    x = constrain(x, 0, 180);
-    y = constrain(y, 0, 180);
-    z = constrain(z, 0, 180);
-    g = constrain(g, 0, 180);
-
-    // Move servos
-    servoX.write(x);
-    servoY.write(y);
-    servoZ.write(z);
-    servoG.write(g);
-
-    // Serial.println(x);
-    // Serial.println(y);
-    // Serial.println(z);
-    // Serial.println(g);
-
-    sendWithCORS(200, "text/plain", "ok");
-  } else {
-    server.send(400, "text/plain", "Missing parameters");
-  }
+void pickup() {
+  display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  display.println("Picking up");
+  LoadingBar(20);
+  display.display();
+  sendCommand("PickUp");
+  delay(500);
 }
 
+void Dance() {
+  display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  display.println("Dancing...");
+  LoadingBar(20);
+  display.display();
+  sendCommand("Dance");
+  delay(500);
+}
 
+//Checks connection to the Robotic Hand
+void Link() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String url = "http://" ROBOT_IP "/ping";
+    http.begin(client,url);
 
-//<-------------Handle Preset motions------------------>
-void Preset() {
-  if (server.hasArg("func")) {
-    String functionToDo = server.arg("func");
-    functionToDo.trim();
-    // Serial.print("func received: ");
-    // Serial.println(server.arg("func"));
+    int httpCode = http.GET();
 
-    if (functionToDo.equals("Do180")) {
-      Do180();
-      sendWithCORS(200, "text/plain", "Function Do180 executed successfully");
-    } else if (functionToDo.equals("Dance")) {
-      Dance();
-      sendWithCORS(200, "text/plain", "Function Dance executed successfully");
+    if (httpCode > 0) {
+      String payload = http.getString();
+      Serial.println("Response: " + payload);
 
+      if (payload == "PONG") {
+        // Show "Connected" on the OLED
+        display.clearDisplay();
+        display.setTextSize(2);
+        display.setTextColor(WHITE);
+        display.setCursor(5, 20);
+        display.println("PONG");
+        display.display();
+      }
     } else {
-      sendWithCORS(503, "text/plain", "Not Defined !");
+      Serial.println("Ping request failed. Code: " + String(httpCode));
     }
+
+    http.end();
   } else {
-    sendWithCORS(400, "text/plain", "Missing Perameters");
+    Serial.println("WiFi not connected");
   }
 }
 
@@ -344,7 +273,7 @@ int num_item = 4;  //<-----------Also update this variable if you updatethe manu
 
 char manu_name[4][20] = {
   { "Preset Motions" },
-  { "Link" },
+  { "Ping" },
   { "Test" },
   { "About" }
 };
@@ -366,12 +295,6 @@ unsigned long lastButtonPress = 0;
 const int debounceDelay = 200;
 
 void setup() {
-  //<---Priortiy for servo-------->
-  servoX.attach(pinX, 500, 2400);
-  servoY.attach(pinY, 500, 2400);
-  servoZ.attach(pinZ, 500, 2400);
-  servoG.attach(pinG, 500, 2400);
-
   Wire.begin(D2, D1);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -386,14 +309,11 @@ void setup() {
   pinMode(BUTTON_DOWN, INPUT_PULLUP);  //Pull Uped by default so you have to connect the Pins to GND in order to activate it
   pinMode(BUTTON_A, INPUT_PULLUP);
 
-  //<---------------Servo Axis--------------->
+  Serial.begin(115200);
 
-
-  //<-------------------Server setup------------------------->
-  // Serial.begin(115200);
-
-
-
+  if (!WiFi.config(local_IP, gateway, subnet)) {
+    Serial.println("STA Failed to configure");
+  }
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   // Serial.print("Connecting to WiFi");
@@ -403,49 +323,15 @@ void setup() {
     // Serial.print(".");
   }
 
-  // Serial.println("");
-  // Serial.println("Connected to WiFi");
-  // Serial.print("IP address: ");
-  // Serial.println(WiFi.localIP());
-  
+
   display.clearDisplay();
   display.setCursor(20, 32);
   display.println(WiFi.localIP());
   display.display();
   delay(3000);
-
-  server.on("/servoPos", HTTP_GET, handleServoPos);
-  server.on("/Preset", HTTP_GET, Preset);
-
-  server.on("/ping", []() {
-    if (awaitingPing) {
-      linkConfirmed = true;
-      awaitingPing = false;
-    }
-    sendWithCORS(200, "text/plain", "PONG");
-  });
-
-
-  server.begin();
-  // Serial.println("Server started");
 }
 
 void loop() {
-  server.handleClient();
-
-  //<---------To test the Link between the ESP8266 and the WEB UI---------------->
-
-  if (linkConfirmed) {
-    display.clearDisplay();
-    display.setCursor(30, 25);
-    display.println("Connected!");
-    display.display();
-    delay(4000);
-    linkConfirmed = false;
-  }
-
-
-
   if (digitalRead(BUTTON_UP) == LOW && millis() - lastButtonPress > debounceDelay) {
     item_selected -= 1;
     if (item_selected < 0) item_selected = num_item - 1;
@@ -548,14 +434,15 @@ void loop() {
           if (preset_item_selected == 1) Do180();
           if (preset_item_selected == 2) pickup();
           if (preset_item_selected == 3) Dance();
-          if (preset_item_selected == 4) delay(300); break;
+          if (preset_item_selected == 4) delay(300);
+          break;
           preset_lastButtonPress = millis();
         }
       }
     }
 
     if (item_selected == 1) {
-      checkWebUILink();
+      Link();
     }
     if (item_selected == 2) {
       testServoandConnection();
