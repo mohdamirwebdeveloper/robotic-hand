@@ -1,3 +1,23 @@
+/*
+ * Project: ESP8266 Wireless Console for Robotic Arm
+ * Version: 1.0.3
+ * 
+ * Description:
+ * This firmware is designed to run on an ESP8266 module acting as a 
+ * wireless console to control a robotic arm remotely over Wi-Fi. 
+ * It sends HTTP GET requests to another ESP8266 module (mounted 
+ * on the robotic arm) to trigger predefined movements or actions.
+ * 
+ * Key Features:
+ * - Supports multiple preset commands (e.g., Do180, HighFive, Pickup, Dance)
+ * - Includes a connectivity check via /ping endpoint
+ * - Displays status and connection info on an OLED screen
+ * - Enhances interactivity by offering a handheld remote-style experience
+ * 
+ * Author: Sunil Kummar , Mohd Amir 
+ * Date: April 2025
+ */
+
 #include <Wire.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
@@ -13,7 +33,7 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1
-#define ROBOT_IP "192.168.43.69"
+#define ROBOT_IP "192.168.43.186"
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
@@ -24,8 +44,8 @@ const char* password = "12345678";
 
 //<-----------------Change this to your Network IP------------------------>
 IPAddress local_IP(192, 168, 43, 70);
-IPAddress gateway(192, 168, 43, 1);       
-IPAddress subnet(255, 255, 255, 0); 
+IPAddress gateway(192, 168, 43, 1);
+IPAddress subnet(255, 255, 255, 0);
 
 //<---------------Bit MAP image------------------>
 
@@ -179,7 +199,7 @@ void sendCommand(const char* funcName) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     String url = "http://" ROBOT_IP "/Preset?func=" + String(funcName);
-    http.begin(client,url);
+    http.begin(client, url);
 
     int httpCode = http.GET();
 
@@ -199,8 +219,8 @@ void sendCommand(const char* funcName) {
 void highfive() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
-  display.println("Dancing...");
-  LoadingBar(20);
+  display.println("HighFIVE");
+  LoadingBar(15);
   display.display();
   sendCommand("HighFive");
   delay(500);
@@ -210,7 +230,7 @@ void Do180() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("Doing 180");
-  LoadingBar(20);
+  LoadingBar(15);
   display.display();
   sendCommand("Do180");
   delay(500);
@@ -220,7 +240,7 @@ void pickup() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("Picking up");
-  LoadingBar(20);
+  LoadingBar(15);
   display.display();
   sendCommand("PickUp");
   delay(500);
@@ -230,7 +250,7 @@ void Dance() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
   display.println("Dancing...");
-  LoadingBar(20);
+  LoadingBar(15);
   display.display();
   sendCommand("Dance");
   delay(500);
@@ -238,10 +258,20 @@ void Dance() {
 
 //Checks connection to the Robotic Hand
 void Link() {
+
+
   if (WiFi.status() == WL_CONNECTED) {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(0, 20);
+    display.println("Checking PING");
+    display.println("Please Wait");
+    display.display();
+    delay(700);
+
     HTTPClient http;
     String url = "http://" ROBOT_IP "/ping";
-    http.begin(client,url);
+    http.begin(client, url);
 
     int httpCode = http.GET();
 
@@ -250,13 +280,11 @@ void Link() {
       Serial.println("Response: " + payload);
 
       if (payload == "PONG") {
-        // Show "Connected" on the OLED
         display.clearDisplay();
-        display.setTextSize(2);
-        display.setTextColor(WHITE);
-        display.setCursor(5, 20);
+        display.setCursor(30, 25);
         display.println("PONG");
         display.display();
+        delay(2000);
       }
     } else {
       Serial.println("Ping request failed. Code: " + String(httpCode));
@@ -273,7 +301,7 @@ int num_item = 4;  //<-----------Also update this variable if you updatethe manu
 
 char manu_name[4][20] = {
   { "Preset Motions" },
-  { "Ping" },
+  { "PING" },
   { "Test" },
   { "About" }
 };
