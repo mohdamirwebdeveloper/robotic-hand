@@ -54,6 +54,22 @@ It is fully programmable, customizable, and modular — making it suitable for r
 | Display                | SSD1306 OLED (I2C)      |
 
 ---
+## Pin Diagram
+### 🔌 Connection Table
+
+| Signal / Function         | GPIO Pin | NodeMCU Pin | Description                             |
+|---------------------------|----------|-------------|-----------------------------------------|
+| **OLED - SCL**            | GPIO 5   | D2          | Serial Clock Line for I2C               |
+| **OLED - SDA**            | GPIO 4   | D1          | Serial Data Line for I2C                |
+| **Button – Up**           | GPIO 14  | D5          | Move up / UI Navigation                 |
+| **Button – Down**         | GPIO 12  | D6          | Move down / UI Navigation               |
+| **Button – A (Action)**   | GPIO 13  | D7          | Select / Confirm action                 |
+| **Servo – Axis X**        | GPIO 0   | D3          | Forward-backward motion (arm reach)     |
+| **Servo – Axis Y**        | GPIO 1   | D10         | Up-down motion (lift arm)               |
+| **Servo – Axis Z**        | GPIO 2   | D4          | "Kekdha" (gripper or rotation function) |
+| **Servo – Base (Axis G)** | GPIO 3   | D9          | Rotating the base of the arm            |
+---
+
 
 ## 🌐 Web Interface Access
 
