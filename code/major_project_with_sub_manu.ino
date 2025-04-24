@@ -368,10 +368,10 @@ void demo() {
   LoadingBar(10);
   display.display();
   //the initial postion
-  moveX(35, 50);
-  moveY(50, 35);
-  moveZ(22, 22);
-  moveG(0, 0);
+  moveX(posX, 50);
+  moveY(posY, 35);
+  moveZ(posZ, 22);
+  moveG(posG, 0);
   delay(800);
 
   moveX(50, 116);
@@ -510,7 +510,7 @@ char manu_name[4][20] = {
 };
 
 char preset_motions_manu[6][20] = {
-  { "High Five" },
+  { "Test servo" },
   { "Do 180" },
   { "Pick up" },
   { "Dance" },
@@ -709,7 +709,7 @@ void loop() {
         //<-------------Calling Each function according to the Loock up table ----------------->
 
         if (digitalRead(BUTTON_A) == LOW && millis() - preset_lastButtonPress > preset_debounceDelay) {
-          if (preset_item_selected == 0) highfive();
+          if (preset_item_selected == 0) testServoandConnection();
           if (preset_item_selected == 1) Do180();
           if (preset_item_selected == 2) pickup();
           if (preset_item_selected == 3) Dance();
