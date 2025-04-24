@@ -37,10 +37,10 @@
 #define BUTTON_DOWN 12  // D6
 #define BUTTON_A 13     // D7
 //<-----------------------------Servo Pins-------------------------------->
-const int pinX = 0;  //D3
-const int pinY = 1;  //D10
-const int pinZ = 2;  //D4
-const int pinG = 3;  //D9
+const int pinX = 0;  //D3 age jane wala hath mr nigg
+const int pinY = 1;  //D10 upper niche kerne wala hath blue motor
+const int pinZ = 2;  //D4 kekdha
+const int pinG = 3;  //D9 base
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -55,6 +55,14 @@ bool awaitingPing = false;
 unsigned long pingStartTime = 0;
 bool linkConfirmed = false;
 bool stopreverse180 = false;
+bool IsKekdhanepakadhrakhahai = false;
+
+//Referance positions of robotic Hand
+
+int posX;
+int posY;
+int posZ;
+int posG;
 
 Servo servoX, servoY, servoZ, servoG;
 
@@ -233,10 +241,32 @@ void Dance() {
 void testServoandConnection() {
   display.clearDisplay();
   display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
-  display.println("Please wait..");
   LoadingBar(60);
   display.display();
   delay(1000);
+  moveX(posX, 20);
+  moveX(posY, 20);
+  moveX(posZ, 20);
+  moveX(posG, 20);
+  int tempX = posX;
+  int tempY = posY;
+  int tempZ = posZ;
+  int tempG = posG;
+
+  posX = 20;
+  posY = 20;
+  posZ = 20;
+  posG = 20;
+
+  moveX(posX, tempX);
+  moveX(posY, tempY);
+  moveX(posZ, tempZ);
+  moveX(posG, tempG);
+
+  posX = tempX;
+  posY = tempY;
+  posZ = tempZ;
+  posG = tempG;
 }
 
 void checkWebUILink() {
@@ -256,21 +286,135 @@ void checkWebUILink() {
 // ek function jo 180 degree motion kerwayga base ka
 void Do180() {
   display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  display.println("Doing 180");
   LoadingBar(20);
   display.display();
   if (stopreverse180) {
-    for (int i = 0; i >= 0; i--) {
-      servoG.write(i);
+    moveG(posG, 0);
+    posG = 0;
+    stopreverse180 = false;
+  } else {
+    moveG(posG, 180);
+    posG = 180;
+    stopreverse180 = true;
+  }
+}
+
+//to Grab a object and to reales it it does it autometically
+void kekdha() {
+  display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  if (IsKekdhanepakadhrakhahai) display.println("Closing");
+  else display.println("Opening");
+  LoadingBar(15);
+  display.display();
+
+  if (IsKekdhanepakadhrakhahai) {
+    for (int i = 145; i >= 0; i--) {
+      servoZ.write(i);
       delay(15);
     }
+    IsKekdhanepakadhrakhahai = false;
+  } else {
+    // If not holding, grab
+    for (int i = 0; i <= 145; i++) {
+      servoZ.write(i);
+      delay(15);
+    }
+    IsKekdhanepakadhrakhahai = true;
   }
-  for (int i = 0; i < 180; i++) {
+}
+
+
+void moveX(int from, int to) {
+  int step = (to > from) ? 1 : -1;
+  for (int i = from; i != to + step; i += step) {
+    servoX.write(i);
+    delay(15);
+  }
+}
+
+void moveY(int from, int to) {
+  int step = (to > from) ? 1 : -1;
+  for (int i = from; i != to + step; i += step) {
+    servoY.write(i);
+    delay(15);
+  }
+}
+
+void moveZ(int from, int to) {
+  int step = (to > from) ? 1 : -1;
+  for (int i = from; i != to + step; i += step) {
+    servoZ.write(i);
+    delay(15);
+  }
+}
+
+void moveG(int from, int to) {
+  int step = (to > from) ? 1 : -1;
+  for (int i = from; i != to + step; i += step) {
     servoG.write(i);
     delay(15);
   }
-
-  stopreverse180 = true;
 }
+
+
+//The demo function
+void demo() {
+  display.clearDisplay();
+  display.setCursor((SCREEN_WIDTH - 60) / 2, (SCREEN_HEIGHT + 22) / 2 - 20);
+  display.println("Demo Mode...");
+  LoadingBar(10);
+  display.display();
+  //the initial postion
+  moveX(35, 50);
+  moveY(50, 35);
+  moveZ(22, 22);
+  moveG(0, 0);
+  delay(800);
+
+  moveX(50, 116);
+  delay(200);
+  moveY(33, 45);
+  delay(200);
+  moveZ(20, 102);
+
+  delay(800);
+  moveG(0, 0);
+  delay(800);
+
+  delay(800);
+  moveZ(102, 22);
+  delay(800);
+
+  moveX(116, 50);
+  delay(200);
+  moveY(45, 35);
+
+  delay(800);
+  moveG(0, 180);
+  delay(800);
+
+  moveY(35, 45);
+  delay(200);
+  moveX(50, 116);
+  delay(200);
+  moveZ(22, 102);
+  delay(200);
+
+  //intial position
+
+  moveY(45, 35);
+  moveX(116, 50);
+  moveZ(102, 22);
+
+  posX = 35;
+  posY = 50;
+  posZ = 22;
+  posG = 180;
+}
+
 
 
 //<----------web interface Get request handler---------------->
@@ -298,10 +442,19 @@ void handleServoPos() {
     g = constrain(g, 0, 180);
 
     // Move servos
-    servoX.write(x);
-    servoY.write(y);
-    servoZ.write(z);
-    servoG.write(g);
+    // servoX.write(x);
+    // servoY.write(y);
+    // servoZ.write(z);
+    // servoG.write(g);
+
+    moveX(posX, x);
+    moveY(posY, y);
+    moveZ(posZ, z);
+    moveG(posG, g);
+    posX = x;
+    posY = y;
+    posZ = z;
+    posG = g;
 
     // Serial.println(x);
     // Serial.println(y);
@@ -331,6 +484,13 @@ void Preset() {
       Dance();
       sendWithCORS(200, "text/plain", "Function Dance executed successfully");
 
+    } else if (functionToDo.equals("Kekdha")) {
+      kekdha();
+      sendWithCORS(200, "text/plain", "Function kekdha executed successfully");
+
+    } else if (functionToDo.equals("demo")) {
+      demo();
+      sendWithCORS(200, "text/plain", "Function Demo executed successfully");
     } else {
       sendWithCORS(503, "text/plain", "Not Defined !");
     }
@@ -345,15 +505,16 @@ int num_item = 4;  //<-----------Also update this variable if you updatethe manu
 char manu_name[4][20] = {
   { "Preset Motions" },
   { "Link" },
-  { "Test" },
+  { "Demo" },
   { "About" }
 };
 
-char preset_motions_manu[5][20] = {
+char preset_motions_manu[6][20] = {
   { "High Five" },
   { "Do 180" },
   { "Pick up" },
   { "Dance" },
+  { "Kekdha" },
   { "Main Manu" }
 };
 
@@ -403,11 +564,15 @@ void setup() {
     // Serial.print(".");
   }
 
-  // Serial.println("");
-  // Serial.println("Connected to WiFi");
-  // Serial.print("IP address: ");
-  // Serial.println(WiFi.localIP());
-  
+  moveX(50, 50);
+  moveY(35, 35);
+  moveZ(22, 22);
+  moveG(0, 0);
+  posX = 50;
+  posY = 35;
+  posZ = 22;
+  posG = 0;
+
   display.clearDisplay();
   display.setCursor(20, 32);
   display.println(WiFi.localIP());
@@ -497,7 +662,7 @@ void loop() {
     lastButtonPress = millis();
 
     if (item_selected == 0) {
-      int preset_num_item = 5;
+      int preset_num_item = 6;
       int preset_item_selected = 0;
       int preset_prev_item;
       int preset_next_item;
@@ -548,7 +713,9 @@ void loop() {
           if (preset_item_selected == 1) Do180();
           if (preset_item_selected == 2) pickup();
           if (preset_item_selected == 3) Dance();
-          if (preset_item_selected == 4) delay(300); break;
+          if (preset_item_selected == 4) kekdha();
+          if (preset_item_selected == 5) delay(300);
+          break;
           preset_lastButtonPress = millis();
         }
       }
@@ -558,7 +725,7 @@ void loop() {
       checkWebUILink();
     }
     if (item_selected == 2) {
-      testServoandConnection();
+      demo();
     }
     if (item_selected == 3) {
       showAbout();
