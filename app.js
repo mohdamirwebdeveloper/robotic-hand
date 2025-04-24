@@ -2,7 +2,7 @@ const delayMap = {};
 const axisValues = { 1: 0, 2: 0, 3: 0, 4: 0 };
 
 
-const ESP8266_IP = "192.168.43.69";  // <----------IP of esp8266
+const ESP8266_IP = "192.168.43.2";  // <----------IP of esp8266
 
 function updateSlider(slider, axisNumber) {
     const tooltip = document.getElementById("tooltip" + axisNumber);
@@ -65,18 +65,75 @@ function testESPLink() {
         });
 }
 
-function PresetMotions(PresetMotionName){
-    const url = `http://${ESP8266_IP}/Preset?func=${PresetMotionName}`;
-    fetch(url)
-    .then(response =>{
-        if(response.ok){
-            alert(`Function ${PresetMotionName} done successful`);
-        }
-        else{
-            alert("Please check PING");
-        }
-    })
-    .catch(()=>{
-        alert('Some Error Accured!');
-    })
+// function PresetMotions(PresetMotionName){
+//     const url = `http://${ESP8266_IP}/Preset?func=${PresetMotionName}`;
+//     fetch(url)
+//     .then(response =>{
+//         if(response.ok){
+//             alert(`Function ${PresetMotionName} done successful`);
+//         }
+//         else{
+//             alert("Please check PING");
+//         }
+//     })
+//     .catch(()=>{
+//         alert('Some Error Accured!');
+//     })
+// }
+
+function PresetMotions(PresetMotionName) {
+    // If the demo button is pressed
+    if (PresetMotionName === "demo") {
+        // Update the axisValues to the initial position
+        axisValues[1] = 35;
+        axisValues[2] = 50;
+        axisValues[3] = 22;
+        axisValues[4] = 0;
+
+        // Step 1: Move to the initial position first
+        const initUrl = `http://${ESP8266_IP}/servoPos?x=35&y=50&z=22&g=0`;
+        fetch(initUrl)
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to move to initial position");
+                return response.text();
+            })
+            .then(() => {
+                console.log("Initial position reached. Now running demo...");
+
+                // Step 2: Call the preset motion after short delay
+                setTimeout(() => {
+                    const url = `http://${ESP8266_IP}/Preset?func=${PresetMotionName}`;
+                    fetch(url)
+                        .then(response => {
+                            if (response.ok) {
+                                alert(`Function ${PresetMotionName} done successfully`);
+                            } else {
+                                alert("Please check PING");
+                            }
+                        })
+                        .catch(() => {
+                            alert('Some Error Occurred while running preset!');
+                        });
+                }, 1000); // 1 second delay
+            })
+            .catch(error => {
+                alert('Error during initial positioning: ' + error.message);
+            });
+    } 
+    else {
+        // For other preset motions, call directly
+        const url = `http://${ESP8266_IP}/Preset?func=${PresetMotionName}`;
+        fetch(url)
+            .then(response => {
+                if (response.ok) {
+                    alert(`Function ${PresetMotionName} done successfully`);
+                } else {
+                    alert("Please check PING");
+                }
+            })
+            .catch(() => {
+                alert('Some Error Occurred!');
+            });
+    }
 }
+
