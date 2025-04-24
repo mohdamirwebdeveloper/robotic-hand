@@ -463,6 +463,8 @@ input[type="range"]::-moz-range-thumb {
 
     .pre-programmed-functions-container{
         overflow: hidden;
+        flex-wrap: wrap;
+        gap: 10px;
         height: auto;
         padding-top: 5px;
         padding-bottom: 5px;
