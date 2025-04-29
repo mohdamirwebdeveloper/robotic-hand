@@ -1,82 +1,107 @@
-# 🤖 Robotic Arm – Dual Interface Automation System
+# 🤖 Robotic Hand with OLED Display & Web Interface – ESP8266 Based 4-Axis Arm
 
-A major engineering project focused on creating a smart robotic hand with 4 degrees of freedom, designed to simulate a factory environment with moving belts and item interaction. This system highlights India’s push toward affordable automation by combining embedded systems with modern web technologies.
+An advanced, yet affordable **ESP8266-based robotic arm project** featuring a **4-axis robotic hand** with dual control interfaces — a local **OLED-based console** and a remote **web interface**. Designed for factory simulations, educational use, and DIY robotics enthusiasts.
 
----
-
-## 🎯 Project Overview
-
-In a world where industrial automation is still out of reach for many, this project introduces a **cost-effective robotic hand** designed for small-scale industries, educational purposes, and prototyping.
-
-The robotic system is controlled using two synchronized interfaces:
-
-- A **Web Interface** accessible on any device within the network  
-- A **Custom OLED Console** built with an ESP12F microcontroller
-
-It is fully programmable, customizable, and modular — making it suitable for real-world factory simulations or specific automation tasks.
+This project showcases how **ESP-12F, SG90/MG90 servos, and SSD1306 OLED** can be combined to build a fully functional, programmable **robotic hand system**.
 
 ---
 
-## 🧠 Key Features
+## 🎯 Overview: ESP8266 Robotic Hand Project
 
-- ✅ **4-Axis Robotic Arm** for flexible object manipulation  
-- 🌐 **Web-Based Control Panel** (Pre-programmed motions + Manual axis control)  
-- 🖥️ **OLED Display Console** with interactive interface and bitmap graphics  
-- 🕹️ **Dual Interface Architecture** – Use OLED or Web interface interchangeably  
-- 🔁 **Pre-programmed Motions** – Dance, Rotate 180°, High Five, Demo, etc.  
-- 🔧 **Fully Reprogrammable** – Adaptable for new tasks or factory setups  
-- 🧩 **Custom Hardware** – Built around the ESP12F with SSD1306 OLED and 3-button control  
+This project is a complete demonstration of **low-cost automation** using the **ESP8266 microcontroller**, ideal for:
 
----
+- STEM education and engineering projects  
+- Small factories or prototype environments  
+- Hobbyists building their first **IoT robotic arm**
 
-## 🛠 Hardware Snapshot
+The robotic hand features:
 
-### Custom ESP-12F Based Microcontroller
-
-![ESP12F Console Microcontroller](https://github.com/mohdamirwebdeveloper/robotic-hand/blob/main/img/microcontroller-min.jpeg)
-
-- SSD1306 OLED (128x64 I2C)
-- Three physical buttons for UI navigation
-- GPIO headers for motor/servo control
-- Designed in **KiCad** with a functional and compact layout
+- Local **OLED UI with buttons** (like a mini robotic console)  
+- Remote **Web Interface** for controlling axis motions  
+- Modular firmware with **pre-programmed actions**  
+- Smooth servo transitions, even without feedback sensors  
 
 ---
 
-## ⚙️ Technologies Used
+## 🔑 Key Features
 
-| Domain                | Technology              |
-|------------------------|-------------------------|
-| Firmware Programming   | C / C++ (Arduino IDE)   |
-| Web Interface          | HTML, CSS, JavaScript   |
-| UI Design              | Adobe Photoshop         |
-| PCB Design             | KiCad                   |
-| Microcontroller        | ESP-12F Console         |
-| Display                | SSD1306 OLED (I2C)      |
+- ✅ **4-Axis Robotic Arm with SG90/MG90 Servos**  
+- 📟 **Interactive OLED Display Console** (ESP-12F + SSD1306 I2C)  
+- 🌐 **Responsive Web Control Panel** (HTML/CSS/JS)  
+- 🔁 **Pre-loaded Movements**: High Five, Rotate 180°, Dance, Demo, etc.  
+- 🔀 **Dual Mode Control** – Use display or web seamlessly  
+- 🔧 **Custom PCB Design in KiCad**  
+- 🧠 **Optimized C++ Firmware** with `moveX(from, to)` style functions  
+- ⚙️ **Easy Reprogramming for Custom Actions**  
 
 ---
-## Pin Diagram
-### 🔌 Connection Table
 
-| Signal / Function         | GPIO Pin | NodeMCU Pin | Description                             |
-|---------------------------|----------|-------------|-----------------------------------------|
-| **OLED - SCL**            | GPIO 5   | D2          | Serial Clock Line for I2C               |
-| **OLED - SDA**            | GPIO 4   | D1          | Serial Data Line for I2C                |
-| **Button – Up**           | GPIO 14  | D5          | Move up / UI Navigation                 |
-| **Button – Down**         | GPIO 12  | D6          | Move down / UI Navigation               |
-| **Button – A (Action)**   | GPIO 13  | D7          | Select / Confirm action                 |
-| **Servo – Axis X**        | GPIO 0   | D3          | Forward-backward motion (arm reach)     |
-| **Servo – Axis Y**        | GPIO 1   | D10         | Up-down motion (lift arm)               |
-| **Servo – Axis Z**        | GPIO 2   | D4          | "Kekdha" (gripper or rotation function) |
-| **Servo – Base (Axis G)** | GPIO 3   | D9          | Rotating the base of the arm            |
+## 🖥️ Hardware Overview: ESP12F Console
+
+A compact, efficient board built around the **ESP8266 (ESP-12F)**:
+
+![ESP12F Console Microcontroller](./img/microcontroller-min.jpeg)
+
+- SSD1306 OLED (128×64 I2C)  
+- 3 Buttons for UI navigation  
+- GPIO headers for servo connections  
+- Designed using **KiCad**  
+
 ---
 
+## 📌 ESP8266 Robotic Arm Pinout
 
-## 🌐 Web Interface Access
+| Component               | GPIO Pin | NodeMCU Pin | Description                             |
+|-------------------------|----------|-------------|-----------------------------------------|
+| **OLED - SCL**          | GPIO 5   | D2          | Clock line for I2C OLED                 |
+| **OLED - SDA**          | GPIO 4   | D1          | Data line for I2C OLED                  |
+| **Button – Up**         | GPIO 14  | D5          | Navigate Up                             |
+| **Button – Down**       | GPIO 12  | D6          | Navigate Down                           |
+| **Button – A**          | GPIO 13  | D7          | Confirm/Enter                           |
+| **Servo – Axis X**      | GPIO 0   | D3          | Forward-Backward motion                 |
+| **Servo – Axis Y**      | GPIO 1   | D10         | Up-Down lift                            |
+| **Servo – Axis Z**      | GPIO 2   | D4          | Claw or “Kekdha” motion                 |
+| **Servo – Base (G)**    | GPIO 3   | D9          | Rotating the base of the arm            |
 
-🖱️ Visit: [https://mohdamirwebdeveloper.github.io/robotic-hand/](https://mohdamirwebdeveloper.github.io/robotic-hand/)  
-📱 Scan the QR code placed on the board to access the live control panel.
+---
 
-Use the interface to control axis positions, trigger actions, and run demos.
+## 🌐 Web Interface for ESP8266 Robotic Arm
+
+Control the robotic hand remotely using your browser:
+
+🔗 **Live Demo:** [https://mohdamirwebdeveloper.github.io/robotic-hand](https://mohdamirwebdeveloper.github.io/robotic-hand)  
+📷 **Scan the QR Code** printed on the board to access the control panel directly.
+
+Features:
+
+- Manual axis control sliders  
+- Trigger buttons for pre-programmed actions  
+- Mobile-responsive design  
+
+---
+
+## 🔧 Technologies & Tools
+
+| Category               | Tool/Tech                    |
+|------------------------|------------------------------|
+| Microcontroller        | ESP-12F (ESP8266)            |
+| Firmware               | Arduino C++                  |
+| Display                | SSD1306 OLED (I2C)           |
+| Web Interface          | HTML, CSS, JavaScript        |
+| PCB Design             | KiCad                        |
+| UI Graphics            | Adobe Photoshop              |
+
+---
+
+## 📦 Download & Flash Firmware
+
+- **Firmware file:** `robotic-hand-v1.0.0.bin`  
+- **Flash tools:** ESP8266 Flasher, `esptool.py`, OTA update  
+- **Board:** Generic ESP8266 Module / NodeMCU ESP-12E  
+
+```bash
+# Example using esptool.py
+esptool.py --port /dev/ttyUSB0 write_flash 0x00000 robotic-hand-v1.0.0.bin
 
 ---
 
@@ -85,11 +110,6 @@ Use the interface to control axis positions, trigger actions, and run demos.
 - **Mohd Amir** 
 - **Sunil Kumar**
 
----
-
-## 👨‍🏫 Guided By
-
-**Anuj Kalra Sir** – Faculty Mentor
 
 ---
 
