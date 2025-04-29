@@ -1,25 +1,31 @@
 /*
   ------------------------------------------------------
   Project Title   : ESP8266 OLED screen based Robotic Arm
-  Version         : 1.2
+  Version         : 1.3.2
   Author          : Mohd Amir
   Contributor     : Sunil Kumar
   Project Type    : Major Project
   ------------------------------------------------------
 
   Description:
-  This project implements an interactive menu system using an ESP8266
-  microcontroller with a 0.96" I2C OLED display. It features a smooth
-  UI experience with bitmap icons, animated startup screen, and
-  navigation using active-low push buttons.
+  This project presents a 4-axis robotic hand designed as a proof of concept
+  for potential industrial applications. The system utilizes cost-effective
+  MG90 and SG90 servo motors for actuation. User interaction is facilitated
+  through an integrated I2C (128x64) OLED display, providing a graphical
+  user interface with icons, text, loading animations, and a hierarchical
+  menu system.
 
-  Designed as a versatile interface console, this system can be easily
-  adapted for various applications like motion presets, testing routines,
-  and device linking. Clean aesthetics and logical flow ensure both
-  usability and expandability for embedded solutions.
+  The architecture supports a dual interface, enabling control via the local
+  OLED GUI for executing pre-programmed motions, as well as remote operation
+  through a web interface for a seamless user experience. To address the
+  absence of feedback mechanisms in the selected servo motors, the software
+  employs algorithms to estimate the current angular positions, ensuring
+  smooth and controlled movements by mitigating abrupt transitions.
 
-  Developed with passion and precision to serve as a solid foundation
-  for real-world IoT and embedded menu-driven applications.
+  The project incorporates a dedicated set of control functions for each axis:
+  `moveX(From, to);`, `moveY(From, to);`, and analogous functions for the
+  remaining axes, facilitating straightforward programming of robotic arm
+  movements. 
 */
 
 
