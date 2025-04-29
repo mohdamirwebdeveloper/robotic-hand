@@ -103,20 +103,4 @@ Features:
 # Example using esptool.py
 esptool.py --port /dev/ttyUSB0 write_flash 0x00000 robotic-hand-v1.0.0.bin
 
----
 
-## 👨‍💻 Creators
-
-- **Mohd Amir** 
-- **Sunil Kumar**
-
-
----
-
-## 📃 License
-
-MIT License. See `LICENSE` for more info.
-
----
-
-> **Note:** This project was developed as part of our major submission to demonstrate real-world automation potential in educational and small-scale industrial contexts.
