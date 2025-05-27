@@ -96,7 +96,7 @@ Features:
 ## 📦 Download & Flash Firmware
 
 - **Firmware file:** `robotic-hand-v1.0.0.bin`  
-- **Flash tools:** ESP8266 Flasher, `esptool.py`, OTA update  
+- **Flash tools:** ESP8266 Flasher, `esptool.py`, OTA update  OR use Chrome `https://esp.huhn.me/`
 - **Board:** Generic ESP8266 Module / NodeMCU ESP-12E  
 
 ```bash
